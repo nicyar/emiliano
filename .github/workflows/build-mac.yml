@@ -17,16 +17,17 @@ jobs:
       uses: actions/setup-node@v4
       with:
         node-version: '18'
-        cache: 'npm'
     
     - name: Instalar dependencias
-      run: npm install
+      run: |
+        npm install
+        npm install -g electron-builder
     
-    - name: Generar DMG para macOS
-      run: npx electron-builder --mac --x64 --arm64
+    - name: Generar DMG
+      run: electron-builder --mac --x64 --arm64
     
     - name: Subir DMG
       uses: actions/upload-artifact@v4
       with:
-        name: Presupuestador-Urbana-macOS
+        name: Presupuestador-Urbana
         path: dist/*.dmg
