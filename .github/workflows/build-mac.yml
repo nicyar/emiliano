@@ -16,17 +16,15 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'          # 👈 Cambio importante: Node 20
-          # 👇 Sin caché para evitar problemas con package-lock.json
+          node-version: '20'
 
       - name: Instalar dependencias
         run: |
           npm install
-          # 👇 Forzar actualización de electron-builder
           npm install -D electron-builder@24.13.3
 
       - name: Generar DMG para macOS
-        run: npx electron-builder --mac --x64 --arm64
+        run: npx electron-builder --mac --x64 --arm64 --publish never
 
       - name: Subir DMG
         uses: actions/upload-artifact@v4
