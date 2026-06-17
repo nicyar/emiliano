@@ -8,26 +8,28 @@ on:
 jobs:
   build:
     runs-on: macos-latest
-    
+
     steps:
-    - name: Checkout código
-      uses: actions/checkout@v4
-    
-    - name: Setup Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version: '18'
-    
-    - name: Instalar dependencias
-      run: |
-        npm install
-        npm install -g electron-builder
-    
-    - name: Generar DMG
-      run: electron-builder --mac --x64 --arm64
-    
-    - name: Subir DMG
-      uses: actions/upload-artifact@v4
-      with:
-        name: Presupuestador-Urbana
-        path: dist/*.dmg
+      - name: Checkout código
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'          # 👈 Cambio importante: Node 20
+          # 👇 Sin caché para evitar problemas con package-lock.json
+
+      - name: Instalar dependencias
+        run: |
+          npm install
+          # 👇 Forzar actualización de electron-builder
+          npm install -D electron-builder@24.13.3
+
+      - name: Generar DMG para macOS
+        run: npx electron-builder --mac --x64 --arm64
+
+      - name: Subir DMG
+        uses: actions/upload-artifact@v4
+        with:
+          name: Presupuestador-Urbana-macOS
+          path: dist/*.dmg
