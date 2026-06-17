@@ -1,0 +1,32 @@
+{
+  "name": "presupuestador-urbana",
+  "version": "1.0.0",
+  "description": "Presupuestador - Urbana Rúbrica Digital",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "build": "electron-builder",
+    "build-mac": "electron-builder --mac --x64 --arm64"
+  },
+  "dependencies": {
+    "pdfkit": "^0.14.0"
+  },
+  "devDependencies": {
+    "electron": "^28.0.0",
+    "electron-builder": "^24.0.0"
+  },
+  "build": {
+    "appId": "com.urbana.presupuestador",
+    "productName": "Presupuestador Urbana",
+    "mac": {
+      "category": "public.app-category.business",
+      "target": [
+        "dmg",
+        "zip"
+      ]
+    },
+    "dmg": {
+      "title": "Presupuestador Urbana"
+    }
+  }
+}

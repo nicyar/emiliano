@@ -1,0 +1,53 @@
+name: Build macOS DMG
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+  # También podés ejecutarlo manualmente desde la interfaz de GitHub
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: macos-latest
+    
+    steps:
+    - name: Checkout código
+      uses: actions/checkout@v4
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+    
+    - name: Instalar dependencias
+      run: npm ci
+      # Si usás yarn, cambiá a: yarn install --frozen-lockfile
+    
+    - name: Compilar app
+      run: npm run build
+      # Si tenés otro comando de build, cambiálo acá
+    
+    - name: Crear DMG para macOS
+      run: |
+        npx electron-builder --mac --x64 --arm64
+        # Esto genera un .dmg para Intel y Apple Silicon (universal)
+        # Si solo querés Intel: --mac x64
+        # Si solo querés M1/M2: --mac arm64
+    
+    - name: Subir DMG como artefacto
+      uses: actions/upload-artifact@v4
+      with:
+        name: macOS-DMG
+        path: dist/*.dmg
+        # También podés subir el .zip si querés
+        # path: dist/*.dmg dist/*.zip
+        
+    - name: Subir también el .zip (opcional)
+      uses: actions/upload-artifact@v4
+      with:
+        name: macOS-ZIP
+        path: dist/*.zip
+        retention-days: 30

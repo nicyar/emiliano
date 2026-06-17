@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Presupuestador – Urbana Rúbrica Digital</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <div class="layout">
+
+    <!-- ── SIDEBAR ── -->
+    <aside class="sidebar">
+      <div class="sidebar-logo">
+        <div class="logo-name">Urbana Rúbrica<br>Digital</div>
+        <div class="logo-sub">Presupuestador v1.0</div>
+      </div>
+      <nav>
+        <div class="nav-item active" id="nav-nuevo" onclick="showView('nuevo')">
+          <span class="nav-icon">📄</span> Nuevo presupuesto
+        </div>
+        <div class="nav-item" id="nav-config" onclick="showView('config')">
+          <span class="nav-icon">⚙️</span> Configuración
+        </div>
+      </nav>
+    </aside>
+
+    <!-- ── VISTA: NUEVO PRESUPUESTO ── -->
+    <main class="main" id="view-nuevo">
+
+      <div class="view-title">Nuevo presupuesto</div>
+
+      <!-- Datos del destinatario -->
+      <section class="section">
+        <div class="section-title">Datos del destinatario</div>
+        <div class="two-col">
+          <div class="field">
+            <label>Razón social</label>
+            <input type="text" id="razonSocial" placeholder="Empresa S.A.">
+          </div>
+          <div class="field">
+            <label>Fecha del presupuesto</label>
+            <input type="date" id="fecha">
+          </div>
+        </div>
+      </section>
+
+      <!-- Unidad de negocio -->
+      <section class="section">
+        <div class="section-title">Unidad de negocio</div>
+        <div class="unit-grid">
+          <button class="unit-btn" id="btn-pba"  onclick="selectUnit('pba')">
+            PBA <span class="unit-sub">Buenos Aires</span>
+          </button>
+          <button class="unit-btn" id="btn-tad"  onclick="selectUnit('tad')">
+            TAD <span class="unit-sub">Trámite a distancia</span>
+          </button>
+          <button class="unit-btn" id="btn-caba" onclick="selectUnit('caba')">
+            CABA <span class="unit-sub">Ciudad de Bs. As.</span>
+          </button>
+        </div>
+      </section>
+
+      <!-- Servicios -->
+      <section class="section">
+        <div class="section-title">Servicios</div>
+
+        <!-- Registro de empleadores -->
+        <div class="toggle-row">
+          <div>
+            <div class="toggle-label">Registro de empleadores</div>
+            <div class="toggle-sub">¿El cliente lo requiere?</div>
+          </div>
+          <label class="switch">
+            <input type="checkbox" id="sw-registro" onchange="toggle('registro-detail'); calcTotal()">
+            <span class="slider"></span>
+          </label>
+        </div>
+        <div class="sub-field hidden" id="registro-detail">
+          <div class="two-col">
+            <div class="field">
+              <label>Nº de empleados</label>
+              <input type="number" id="numEmpleados" placeholder="0" min="0">
+            </div>
+            <div class="field">
+              <label>Fecha de realización</label>
+              <input type="date" id="fechaRealizacion">
+            </div>
+          </div>
+        </div>
+
+        <!-- Firma digital -->
+        <div class="toggle-row">
+          <div>
+            <div class="toggle-label">Firma digital</div>
+            <div class="toggle-sub">Se suma el monto configurado</div>
+          </div>
+          <label class="switch">
+            <input type="checkbox" id="sw-firma" onchange="calcTotal()">
+            <span class="slider"></span>
+          </label>
+        </div>
+
+        <!-- Tipo de presentación -->
+        <div class="field" style="margin-top:6px">
+          <label>Tipo de presentación</label>
+          <div class="radio-row">
+            <div class="radio-opt" id="opt-mensual"   onclick="selectTipo('mensual')">Mensual</div>
+            <div class="radio-opt" id="opt-historico" onclick="selectTipo('historico')">Histórico</div>
+          </div>
+        </div>
+
+        <!-- Puesta en marcha -->
+        <div class="toggle-row">
+          <div>
+            <div class="toggle-label">Puesta en marcha</div>
+            <div class="toggle-sub">Se suma el monto configurado</div>
+          </div>
+          <label class="switch">
+            <input type="checkbox" id="sw-puesta" onchange="calcTotal()">
+            <span class="slider"></span>
+          </label>
+        </div>
+
+        <!-- Más de 12 meses -->
+        <div class="toggle-row">
+          <div>
+            <div class="toggle-label">Más de 12 meses</div>
+            <div class="toggle-sub">Habilita bonificación sobre puesta en marcha</div>
+          </div>
+          <label class="switch">
+            <input type="checkbox" id="sw-12meses" onchange="toggle('bonif-detail'); calcTotal()">
+            <span class="slider"></span>
+          </label>
+        </div>
+        <div class="sub-field hidden" id="bonif-detail">
+          <label>% de bonificación (máximo 40%)</label>
+          <input type="number" id="pctBonif" placeholder="0" min="0" max="40" oninput="calcTotal()" style="width:120px">
+        </div>
+      </section>
+
+      <!-- Resumen -->
+      <section class="section">
+        <div class="section-title">Resumen del presupuesto</div>
+        <div class="total-card">
+          <div id="total-rows" class="total-rows">
+            <div class="placeholder-msg">Seleccioná una unidad y tipo de presentación para ver el resumen.</div>
+          </div>
+          <div class="btn-group">
+            <button class="btn-pdf" onclick="generarPDF()">⬇ Generar PDF</button>
+            <button class="btn-reset" onclick="reiniciar()">↺ Nuevo presupuesto</button>
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- ── VISTA: CONFIGURACIÓN ── -->
+    <main class="main hidden" id="view-config">
+
+      <div class="view-title">Configuración de precios</div>
+
+      <section class="section">
+        <div class="section-title">PBA — Provincia de Buenos Aires</div>
+        <div class="two-col">
+          <div class="field"><label>Precio mensual</label><input type="number" id="cfg-pba_mensual" min="0"></div>
+          <div class="field"><label>Precio histórico</label><input type="number" id="cfg-pba_historico" min="0"></div>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="section-title">TAD — Trámite a distancia</div>
+        <div class="two-col">
+          <div class="field"><label>Precio mensual</label><input type="number" id="cfg-tad_mensual" min="0"></div>
+          <div class="field"><label>Precio histórico</label><input type="number" id="cfg-tad_historico" min="0"></div>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="section-title">CABA — Ciudad de Buenos Aires</div>
+        <div class="two-col">
+          <div class="field"><label>Precio base CABA</label><input type="number" id="cfg-caba_base" min="0"></div>
+          <div class="field"></div>
+          <div class="field"><label>Precio mensual</label><input type="number" id="cfg-caba_mensual" min="0"></div>
+          <div class="field"><label>Precio histórico</label><input type="number" id="cfg-caba_historico" min="0"></div>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="section-title">Servicios adicionales</div>
+        <div class="two-col">
+          <div class="field"><label>Firma digital</label><input type="number" id="cfg-firma" min="0"></div>
+          <div class="field"><label>Puesta en marcha</label><input type="number" id="cfg-puesta_en_marcha" min="0"></div>
+        </div>
+      </section>
+
+      <button class="btn-save" onclick="guardarConfig()">Guardar cambios</button>
+      <div class="save-msg hidden" id="save-msg">✓ Precios guardados correctamente</div>
+
+    </main>
+
+  </div>
+
+  <script src="renderer.js"></script>
+</body>
+</html>
